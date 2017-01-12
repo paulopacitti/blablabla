@@ -9,6 +9,10 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
 	console.log('a user connected');
 
+	socket.on('first', function(user){
+		socket.broadcast.emit("first", user + " has connected...");
+	});
+
 	socket.on('message', function(msg){
 		socket.emit("message", msg);
 		socket.broadcast.emit("message", msg);

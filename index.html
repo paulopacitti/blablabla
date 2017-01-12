@@ -5,18 +5,29 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-    $( document ).ready(function() {
-        var socket = io();
-        
+    var socket = io();
+    var nickname = "";
+    
+    function connected()
+    {
+      nickname = prompt("Enter your nickname:");
+      socket.emit('first', nickname);
+    }
+
+    $( document ).ready(function(){
 
         $('form').submit(function(){
-          socket.emit('message', $('#m').val());
+          socket.emit('message', nickname + ": " + $('#m').val());
           $('#m').val('');
           return false;
         });
 
         socket.on('message', function(msg){
           $('#messages').append($('<li>').text(msg));
+        });
+
+        socket.on('first', function(data){
+          $('#messages').append($('<li>').text(data));
         });
       });
     </script>
@@ -31,7 +42,7 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
-  <body>
+  <body onload="connected()">
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
